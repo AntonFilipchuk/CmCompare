@@ -1,6 +1,26 @@
 <!-- <div *ngIf="ping$ | async as pingResult">
     <h1>{{pingResult.status}}</h1>
 </div> -->
-<div *ngIf="coins$ | async as coins">
+<!-- <div *ngIf="coins$ | async as coins">
     <app-coins-table-row *ngFor="let coin of coins"></app-coins-table-row>
-</div>
+</div> -->
+<table mat-table [dataSource]="coins$" class="mat-elevation-z8">
+    <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>ID</th>
+        <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+    </ng-container>
+    <ng-container matColumnDef="current_price">
+        <th mat-header-cell *matHeaderCellDef>Current price</th>
+        <td mat-cell *matCellDef="let element">{{ element.current_price | currency :'USD' }}</td>
+    </ng-container>
+    <ng-container matColumnDef="circulating_supply">
+        <th mat-header-cell *matHeaderCellDef>Circulating supply</th>
+        <td mat-cell *matCellDef="let element">{{ element.circulating_supply | number :'1.0-0' }}</td>
+    </ng-container>
+    <ng-container matColumnDef="market_cap">
+        <th mat-header-cell *matHeaderCellDef>Market cap</th>
+        <td mat-cell *matCellDef="let element">{{ element.market_cap | currency :'USD'}}</td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="columns$ | async"></tr>
+    <tr mat-row *matRowDef="let row; columns: columns$ | async"></tr>
+</table>

@@ -31,9 +31,13 @@ export class CoinsService
 
     if (!coinsData || currentTime - coinsData.timeOfRequest > this.FIVE_MINUTES)
     {
+      console.log('Making request to CoinGecko for coins info...');
+      console.log(`Current time: ${new Date(Date.now())}`, `Time of previous request: ${coinsData ? new Date(coinsData.timeOfRequest) : 'No previous requst was made'}`);
+
       return this.#getCoinsData();
     } else
     {
+      console.log('Getting coins data from local storage');
       return of(coinsData);
     }
 
