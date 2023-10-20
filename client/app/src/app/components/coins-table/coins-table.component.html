@@ -4,7 +4,8 @@
 <!-- <div *ngIf="coins$ | async as coins">
     <app-coins-table-row *ngFor="let coin of coins"></app-coins-table-row>
 </div> -->
-<table mat-table [dataSource]="coins$" class="mat-elevation-z8">
+<table mat-table [dataSource]="coins$" class="mat-elevation-z8" cdkDropList [cdkDropListData]="coins$ | async"
+    (cdkDropListDropped)=" moveTableRows($event)">
     <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef>ID</th>
         <td mat-cell *matCellDef="let element">{{ element.id }}</td>
@@ -21,6 +22,7 @@
         <th mat-header-cell *matHeaderCellDef>Market cap</th>
         <td mat-cell *matCellDef="let element">{{ element.market_cap | currency :'USD'}}</td>
     </ng-container>
+
     <tr mat-header-row *matHeaderRowDef="columns$ | async"></tr>
-    <tr mat-row *matRowDef="let row; columns: columns$ | async"></tr>
+    <tr mat-row cdkDrag [cdkDragData]="row" *matRowDef="let row; columns: columns$ | async"></tr>
 </table>
