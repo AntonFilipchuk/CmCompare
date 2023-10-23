@@ -1,28 +1,33 @@
-<!-- <div *ngIf="ping$ | async as pingResult">
-    <h1>{{pingResult.status}}</h1>
-</div> -->
-<!-- <div *ngIf="coins$ | async as coins">
-    <app-coins-table-row *ngFor="let coin of coins"></app-coins-table-row>
-</div> -->
-<table mat-table [dataSource]="coins$" class="mat-elevation-z8" cdkDropList [cdkDropListData]="coins$ | async"
-    (cdkDropListDropped)=" moveTableRows($event)">
+
+
+<table mat-table [dataSource]="coins$"  cdkDropList [cdkDropListData]="coins$ | async"
+    (cdkDropListDropped)="moveTableRows($event)">
+
+
     <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef>ID</th>
-        <td mat-cell *matCellDef="let element">{{ element.id }}</td>
-    </ng-container>
-    <ng-container matColumnDef="current_price">
-        <th mat-header-cell *matHeaderCellDef>Current price</th>
-        <td mat-cell *matCellDef="let element">{{ element.current_price | currency :'USD' }}</td>
-    </ng-container>
-    <ng-container matColumnDef="circulating_supply">
-        <th mat-header-cell *matHeaderCellDef>Circulating supply</th>
-        <td mat-cell *matCellDef="let element">{{ element.circulating_supply | number :'1.0-0' }}</td>
-    </ng-container>
-    <ng-container matColumnDef="market_cap">
-        <th mat-header-cell *matHeaderCellDef>Market cap</th>
-        <td mat-cell *matCellDef="let element">{{ element.market_cap | currency :'USD'}}</td>
+        <mat-header-cell *matHeaderCellDef>Id</mat-header-cell>
+        <mat-cell *matCellDef="let coin"> {{coin.id}} </mat-cell>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="columns$ | async"></tr>
-    <tr mat-row cdkDrag [cdkDragData]="row" *matRowDef="let row; columns: columns$ | async"></tr>
+
+    <ng-container matColumnDef="current_price">
+        <mat-header-cell *matHeaderCellDef> Price </mat-header-cell>
+        <mat-cell *matCellDef="let coin"> {{coin.current_price | currency :'USD'}} </mat-cell>
+    </ng-container>
+
+
+    <ng-container matColumnDef="circulating_supply">
+        <mat-header-cell *matHeaderCellDef> Supply </mat-header-cell>
+        <mat-cell *matCellDef="let coin"> {{coin.circulating_supply | number :'1.0-0'}} </mat-cell>
+    </ng-container>
+
+
+    <ng-container matColumnDef="market_cap">
+        <mat-header-cell *matHeaderCellDef> Market Cap </mat-header-cell>
+        <mat-cell *matCellDef="let coin"> {{coin.market_cap | currency :'USD'}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="columns$ | async"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: columns$ | async;" cdkDrag [cdkDragData]="row"></mat-row>
 </table>
+

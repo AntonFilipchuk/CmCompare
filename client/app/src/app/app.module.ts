@@ -9,12 +9,14 @@ import { CoinsTableRowComponent } from './components/coins-table/coins-table-row
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatTableModule } from '@angular/material/table';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { TestTableComponent } from './components/test-table/test-table.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CoinsTableComponent,
-    CoinsTableRowComponent
+    CoinsTableRowComponent,
+    TestTableComponent
   ],
   imports: [
     BrowserModule,

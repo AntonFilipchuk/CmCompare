@@ -11,9 +11,9 @@ import { CdkDrag, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
   templateUrl: './coins-table.component.html',
   styleUrls: ['./coins-table.component.scss']
 })
-export class CoinsTableComponent implements OnInit
+export class CoinsTableComponent
 {
-  //ping$ = this.coinService.ping();
+
   @ViewChild(MatTable, { static: false }) table!: MatTable<any>;
   coinsData$: Observable<CoinsData> = this.coinService.getTop100Coins();
   coins$: Observable<Coin[]> = this.coinsData$.pipe(map((data: CoinsData) => (data.coins).slice(0, 10)));
@@ -22,26 +22,24 @@ export class CoinsTableComponent implements OnInit
     const coin = data.coins[0];
     return Object.keys(coin).filter((item) => this.displayedColumns.includes(item));
   }));
-  coins: Coin[] | undefined;
 
   displayedColumns: string[] = ['id', 'current_price', 'circulating_supply', 'market_cap'];
   constructor (private coinService: CoinsService) { }
-  ngOnInit(): void
+  moveTableRows(event: CdkDragDrop<Coin[] | null>)
   {
-  };
+    console.log(event);
 
-  moveTableRows(event: CdkDragDrop<Coin[] | null>) {
     this.coins$ = this.coins$.pipe(
-      concatMap((coins) => {
+      switchMap((coins) =>
+      {
         const prevIndex = coins.findIndex((coin) => coin.id === event.item.data.id);
         moveItemInArray(coins, prevIndex, event.currentIndex);
         return of(coins);
       })
     );
-  
+
     this.table.renderRows();
   }
-  
 
   ping(): Observable<any>
   {
