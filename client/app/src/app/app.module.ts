@@ -11,6 +11,7 @@ import { MatTableModule } from '@angular/material/table';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { TestTableComponent } from './components/test-table/test-table.component';
 import { LoadingOrErrorComponent } from './components/loading-or-error/loading-or-error.component';
+import { CoinInfoCellComponent } from './components/coins-table/coin-info-cell/coin-info-cell.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { LoadingOrErrorComponent } from './components/loading-or-error/loading-o
     CoinsTableComponent,
     CoinsTableRowComponent,
     TestTableComponent,
-    LoadingOrErrorComponent
+    LoadingOrErrorComponent,
+    CoinInfoCellComponent
   ],
   imports: [
     BrowserModule,

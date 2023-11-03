@@ -19,7 +19,7 @@ export class CoinsTableComponent
   table$: Observable<Coin[]> = this.tableService.getTable();
   coinsMarketCaps: number[] | undefined;
   constructor (private coinService: CoinsService, private tableService: TableService) { }
-  displayedColumns: string[] = ['id', 'current_price', 'circulating_supply', 'market_cap'];
+  displayedColumns: string[] = ['#', 'id', 'current_price', 'circulating_supply', 'market_cap'];
   totalMarketCap$: Observable<number> = this.table$.pipe(map(coins => coins.map(coin => coin.market_cap).reduce((acc, value) => acc + value)));
 
   moveTableRows(event: CdkDragDrop<Coin[], any, any>, table: Coin[])
@@ -31,16 +31,17 @@ export class CoinsTableComponent
     }
     moveItemInArray(table, selectedCoinIndex, event.currentIndex);
 
-    this.recalculatePrices(this.coinsMarketCaps!, table);
+    this.recalculateCoinsValues(this.coinsMarketCaps!, table);
     this.tableService.setTable(table);
     this.table.renderRows();
   }
-  recalculatePrices(coinsMarketCaps: number[], coins: Coin[])
+  recalculateCoinsValues(coinsMarketCaps: number[], coins: Coin[])
   {
     coins.map((coin, index) => 
     {
       coin.market_cap = coinsMarketCaps[index];
       coin.current_price = coin.market_cap / coin.circulating_supply;
+      coin.market_cap_rank = ++index;
     });
   }
 

@@ -1,10 +1,17 @@
-<div *ngIf="table$ | async as table">
+<div *ngIf="table$ | async as table" class="table-container">
     {{setCoinsMarketCaps(table)}}
+
     <mat-table [dataSource]="table" cdkDropList [cdkDropListData]="table"
         (cdkDropListDropped)="moveTableRows($event, table)">
+
+        <ng-container matColumnDef="#">
+            <mat-header-cell class="market-cap-rank" *matHeaderCellDef>#</mat-header-cell>
+            <mat-cell class="market-cap-rank" *matCellDef="let coin"> {{coin.market_cap_rank}} </mat-cell>
+        </ng-container>
+
         <ng-container matColumnDef="id">
             <mat-header-cell *matHeaderCellDef>Id</mat-header-cell>
-            <mat-cell *matCellDef="let coin"> {{coin.id}} </mat-cell>
+            <mat-cell *matCellDef="let coin"> <app-coin-info-cell [coin]="coin"></app-coin-info-cell> </mat-cell>
         </ng-container>
 
 
@@ -26,6 +33,8 @@
         </ng-container>
 
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;" cdkDrag [cdkDragData]="row"></mat-row>
+        <mat-row *matRowDef="let rowData; let even = even; columns: displayedColumns;" cdkDrag [cdkDragData]="rowData"
+            [ngClass]="{gray: even}"></mat-row>
     </mat-table>
+
 </div>

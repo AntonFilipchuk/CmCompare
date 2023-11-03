@@ -7,5 +7,6 @@ import { Coin } from 'src/app/Interfaces/Coin';
   styleUrls: ['./coins-table-row.component.scss']
 })
 export class CoinsTableRowComponent {
-  @Input() coin! : Coin;
+  @Input() rowData : any;
+  
 }
