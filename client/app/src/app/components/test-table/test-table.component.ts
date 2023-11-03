@@ -1,15 +1,10 @@
 import { CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
-import { Observable, from, map, of } from 'rxjs';
+import { Observable, from, map, of, switchMap, take, takeLast } from 'rxjs';
+import { TestService } from 'src/app/services/TestService/test-service.service';
 
-export interface PeriodicElement
-{
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
-}
+
 
 
 @Component({
@@ -17,30 +12,44 @@ export interface PeriodicElement
   templateUrl: './test-table.component.html',
   styleUrls: ['./test-table.component.scss']
 })
-export class TestTableComponent implements OnInit
+export class TestTableComponent
 {
-  @ViewChild(MatTable, { static: false }) table!: MatTable<any>;
-  displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
-  columns$: Observable<string[]> = of(this.displayedColumns);
-  ELEMENT_DATA!: PeriodicElement[];
-  elements$!: Observable<PeriodicElement[]>;
-
-
-  ngOnInit()
+  constructor(private testService : TestService)
   {
-    this.ELEMENT_DATA = [
-      { position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N' },
-      { position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O' },
-      { position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F' },
-      { position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne' },
-    ];
+    
+  }
+  foo$: Observable<number> = this.testService.getRandomData();
+  modifiedFoo$ = this.foo$.pipe(map(val => val * 10));
+  changeFoo()
+  {
+    // let a : Observable<number> = this.foo$.pipe(map(x => 
 
-    this.elements$ = of(this.ELEMENT_DATA);
+    //   {
+    //     console.log(x);
+    //     return x + 2;
+    // }));
+    // a.subscribe(val => this.foo$ = of(val)).unsubscribe();
+
+    this.foo$ = this.foo$.pipe(
+      map((x,i) =>
+      {
+        console.log(x);
+        return x + 2;
+      })
+    );
   }
 
-  drop(event: CdkDragDrop<PeriodicElement[] | any>)
+  getNewData()
   {
-    moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    this.table.renderRows();
+    this.foo$ = this.testService.getRandomData()
   }
+
+  makeSubsctiotion()
+  {
+    console.log(this.foo$);
+
+    this.foo$.subscribe(val => console.log("Sub :", val)
+    ).unsubscribe();
+  }
+
 }

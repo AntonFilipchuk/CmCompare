@@ -1,0 +1,9 @@
+<ng-template #template>
+    <div *ngIf="loadingWrapper">
+        <div *ngIf="loadingWrapper.errorLoading$! | async as a; else loading">
+            {{ errorMessage }}
+        </div>
+    </div>
+
+    <ng-template #loading> Loading... </ng-template>
+</ng-template>

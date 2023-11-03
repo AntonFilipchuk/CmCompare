@@ -1,10 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Observable, concatMap, filter, findIndex, from, map, mergeMap, of, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, concatMap, filter, findIndex, from, map, mergeMap, of, reduce, switchMap, take, takeLast, tap, throttleTime } from 'rxjs';
 import { CoinsService } from 'src/app/services/CoinService/coins.service';
 import { CoinsData } from 'src/app/Interfaces/CoinsData';
 import { Coin } from 'src/app/Interfaces/Coin';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { CdkDrag, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { LoadingWrapper } from 'src/app/Helpers/LoadingWrapper/LoadingWrapper';
+import { TableService } from 'src/app/services/TableService/table.service';
 
 @Component({
   selector: 'app-coins-table',
@@ -13,37 +15,46 @@ import { CdkDrag, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 })
 export class CoinsTableComponent
 {
-
   @ViewChild(MatTable, { static: false }) table!: MatTable<any>;
-  coinsData$: Observable<CoinsData> = this.coinService.getTop100Coins();
-  coins$: Observable<Coin[]> = this.coinsData$.pipe(map((data: CoinsData) => (data.coins).slice(0, 10)));
-  columns$: Observable<string[]> = this.coinsData$.pipe(map((data: CoinsData) => 
-  {
-    const coin = data.coins[0];
-    return Object.keys(coin).filter((item) => this.displayedColumns.includes(item));
-  }));
-
+  table$: Observable<Coin[]> = this.tableService.getTable();
+  coinsMarketCaps: number[] | undefined;
+  constructor (private coinService: CoinsService, private tableService: TableService) { }
   displayedColumns: string[] = ['id', 'current_price', 'circulating_supply', 'market_cap'];
-  constructor (private coinService: CoinsService) { }
-  moveTableRows(event: CdkDragDrop<Coin[] | null>)
+  totalMarketCap$: Observable<number> = this.table$.pipe(map(coins => coins.map(coin => coin.market_cap).reduce((acc, value) => acc + value)));
+
+  moveTableRows(event: CdkDragDrop<Coin[], any, any>, table: Coin[])
   {
-    console.log(event);
+    const selectedCoinIndex = table.findIndex((coin) => coin.id === event.item.data.id);
+    if (selectedCoinIndex === event.currentIndex)
+    {
+      return;
+    }
+    moveItemInArray(table, selectedCoinIndex, event.currentIndex);
 
-    this.coins$ = this.coins$.pipe(
-      switchMap((coins) =>
-      {
-        const prevIndex = coins.findIndex((coin) => coin.id === event.item.data.id);
-        moveItemInArray(coins, prevIndex, event.currentIndex);
-        return of(coins);
-      })
-    );
-
+    this.recalculatePrices(this.coinsMarketCaps!, table);
+    this.tableService.setTable(table);
     this.table.renderRows();
   }
-
-  ping(): Observable<any>
+  recalculatePrices(coinsMarketCaps: number[], coins: Coin[])
   {
-    return this.coinService.ping();
+    coins.map((coin, index) => 
+    {
+      coin.market_cap = coinsMarketCaps[index];
+      coin.current_price = coin.market_cap / coin.circulating_supply;
+    });
   }
+
+  setCoinsMarketCaps(table: Coin[])
+  {
+    this.coinsMarketCaps = table.map(coin => coin.market_cap);
+  }
+
 }
+
+
+
+
+
+
+
 

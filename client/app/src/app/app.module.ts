@@ -10,13 +10,15 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatTableModule } from '@angular/material/table';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { TestTableComponent } from './components/test-table/test-table.component';
+import { LoadingOrErrorComponent } from './components/loading-or-error/loading-or-error.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CoinsTableComponent,
     CoinsTableRowComponent,
-    TestTableComponent
+    TestTableComponent,
+    LoadingOrErrorComponent
   ],
   imports: [
     BrowserModule,

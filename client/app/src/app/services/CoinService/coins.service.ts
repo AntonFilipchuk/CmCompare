@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, throwError, map, of } from 'rxjs';
+import { Observable, throwError, map, of, shareReplay } from 'rxjs';
 import { environment } from 'src/environments/environment.development';
 import { LocalStorageService } from '../LocalStorageService/local-storage.service';
 import { Coin } from 'src/app/Interfaces/Coin';
@@ -27,7 +27,9 @@ export class CoinsService
     try
     {
       coinsData = this.localStorageService.getObject('coins-data') as CoinsData;
-    } catch (error) { }
+    } catch (error) { 
+      
+    }
 
     if (!coinsData || currentTime - coinsData.timeOfRequest > this.FIVE_MINUTES)
     {
@@ -45,17 +47,27 @@ export class CoinsService
 
   #getCoinsData(): Observable<CoinsData>
   {
-    let coinsData = this.http.get<Coin[]>(`${environment.apiDomain}${environment.apiTop100CoinsDefaultEndpoint}`).pipe(map((data) =>
+   return this.http.get<Coin[]>(`${environment.apiDomain}${environment.apiTop100CoinsDefaultEndpoint}`, { observe: 'response' }).pipe(map((data) =>
     {
+      console.log('DATA',data);
+      
       let obj: CoinsData = {
         coins: [],
         timeOfRequest: 0
       };
-      obj.coins = data;
-      obj.timeOfRequest = Date.now();
-      this.localStorageService.setObject('coins-data', obj);
-      return obj;
-    }));
-    return coinsData;
+      
+      if(data.body && (data.status === 200))
+      {
+        obj.coins = data.body;
+        obj.timeOfRequest = Date.now();
+        this.localStorageService.setObject('coins-data', obj);
+        return obj;
+      }
+      try {
+        return this.localStorageService.getObject('coins-data') as CoinsData
+      } catch (error) {
+        throw new AggregateError([new Error('Failed to get coins data from local storage'), new Error(`Failed to fetch coins data. Status: ${data.status}`)])
+      }
+    }), shareReplay(1));
   }
 }
