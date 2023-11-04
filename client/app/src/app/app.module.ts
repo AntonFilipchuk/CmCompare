@@ -12,6 +12,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { TestTableComponent } from './components/test-table/test-table.component';
 import { LoadingOrErrorComponent } from './components/loading-or-error/loading-or-error.component';
 import { CoinInfoCellComponent } from './components/coins-table/coin-info-cell/coin-info-cell.component';
+import { CoinDashboardComponent } from './components/coin-dashboard/coin-dashboard.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { CoinInfoCellComponent } from './components/coins-table/coin-info-cell/c
     CoinsTableRowComponent,
     TestTableComponent,
     LoadingOrErrorComponent,
-    CoinInfoCellComponent
+    CoinInfoCellComponent,
+    CoinDashboardComponent
   ],
   imports: [
     BrowserModule,

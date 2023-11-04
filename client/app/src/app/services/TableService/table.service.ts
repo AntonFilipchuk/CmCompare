@@ -9,9 +9,9 @@ import { CoinsData } from 'src/app/Interfaces/CoinsData';
 })
 export class TableService
 {
-  constructor (private coinService: CoinsService)
+  constructor (private coinsService : CoinsService)
   {
-    coinService.getTop100Coins().pipe(map((data: CoinsData) => (data.coins).slice(0, 90))).subscribe((table) =>
+    coinsService.getTop100Coins().pipe(map((data: CoinsData) => (data.coins))).subscribe((table) =>
     {
       this.setTable(table);
     });

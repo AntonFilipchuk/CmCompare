@@ -7,6 +7,7 @@ import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { CdkDrag, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { LoadingWrapper } from 'src/app/Helpers/LoadingWrapper/LoadingWrapper';
 import { TableService } from 'src/app/services/TableService/table.service';
+import { CoinDashboardService } from 'src/app/services/CoinDashboardService/coin-dashboard.service';
 
 @Component({
   selector: 'app-coins-table',
@@ -18,7 +19,10 @@ export class CoinsTableComponent
   @ViewChild(MatTable, { static: false }) table!: MatTable<any>;
   table$: Observable<Coin[]> = this.tableService.getTable();
   coinsMarketCaps: number[] | undefined;
-  constructor (private coinService: CoinsService, private tableService: TableService) { }
+  constructor (private tableService: TableService,
+    private coinDashboardService: CoinDashboardService) { }
+
+
   displayedColumns: string[] = ['#', 'id', 'current_price', 'circulating_supply', 'market_cap'];
   totalMarketCap$: Observable<number> = this.table$.pipe(map(coins => coins.map(coin => coin.market_cap).reduce((acc, value) => acc + value)));
 
@@ -45,9 +49,17 @@ export class CoinsTableComponent
     });
   }
 
-  setCoinsMarketCaps(table: Coin[])
+  setInitialValues(table: Coin[])
   {
     this.coinsMarketCaps = table.map(coin => coin.market_cap);
+  }
+
+  onDragStart(rowData: any)
+  {
+    let coin = rowData as (Coin | null);
+    this.coinDashboardService.onCoinSelection(coin);
+    console.log("Drag Started", rowData);
+
   }
 
 }

@@ -41,6 +41,16 @@
   background-color: #f5f5f5
 }
 
-.mat-cell {
-  display: inline-flex !important;
+mat-cell {
+  display: flex;
+  padding: 0 5px 0 5px;
+}
+
+mat-header-cell {
+  display: flex;
+  padding: 0 5px 0 5px;
+}
+
+mat-table {
+  max-width: 1400px !important;
 }
