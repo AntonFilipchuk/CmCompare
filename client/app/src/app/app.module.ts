@@ -13,6 +13,8 @@ import { TestTableComponent } from './components/test-table/test-table.component
 import { LoadingOrErrorComponent } from './components/loading-or-error/loading-or-error.component';
 import { CoinInfoCellComponent } from './components/coins-table/coin-info-cell/coin-info-cell.component';
 import { CoinDashboardComponent } from './components/coin-dashboard/coin-dashboard.component';
+import { TestOneComponent } from './components/Test/test-one/test-one/test-one.component';
+import { TestTwoComponent } from './components/Test/test-two/test-two.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,9 @@ import { CoinDashboardComponent } from './components/coin-dashboard/coin-dashboa
     TestTableComponent,
     LoadingOrErrorComponent,
     CoinInfoCellComponent,
-    CoinDashboardComponent
+    CoinDashboardComponent,
+    TestOneComponent,
+    TestTwoComponent
   ],
   imports: [
     BrowserModule,

@@ -1,72 +1,137 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, throwError, map, of, shareReplay } from 'rxjs';
+import { Observable, throwError, map, of, shareReplay, catchError, retry, tap } from 'rxjs';
 import { environment } from 'src/environments/environment.development';
 import { LocalStorageService } from '../LocalStorageService/local-storage.service';
 import { Coin } from 'src/app/Interfaces/Coin';
 import { CoinsData } from 'src/app/Interfaces/CoinsData';
+
+
+const FIVE_MINUTES: number = 300000;
+const COINS_DATA_LOCAL_STORAGE_KEY = 'test-coins-data';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class CoinsService
 {
-  FIVE_MINUTES = 300000;
   constructor (private http: HttpClient, private localStorageService: LocalStorageService) { }
 
-  private data$: Observable<CoinsData> | undefined;
 
-  getTop100Coins(): Observable<CoinsData>
+  private coinsData$: Observable<CoinsData> | undefined;
+  // = this.getCoinsData().pipe(shareReplay(1));
+
+
+
+  public getCoinsData(): Observable<CoinsData>
   {
-    let currentTime: number = Date.now();
-    let coinsData: CoinsData | undefined;
-    try
+    if (!this.coinsData$)
     {
-      coinsData = this.localStorageService.getObject('coins-data') as CoinsData;
-    } catch (error)
-    {
-
+      this.coinsData$ = this.getFreshCoinsData();
     }
 
-    if (!coinsData || (currentTime - coinsData.timeOfRequest > this.FIVE_MINUTES))
-    {
-      if (!this.data$)
-      {
-        this.data$ = this.#getCoinsData().pipe(shareReplay(1));
-        return this.data$;
-      }
-      return this.data$;
-    }
-    return of(coinsData);
+    return this.coinsData$;
   }
 
-  #getCoinsData(): Observable<CoinsData>
+  private getFreshCoinsData(): Observable<CoinsData>
   {
-    console.log('GETTING COINS DATA FROM API');
-
-    return this.http.get<Coin[]>(`${environment.apiDomain}${environment.apiTop100CoinsDefaultEndpoint}`, { observe: 'response' }).pipe(map((data) =>
+    try
     {
-      console.log('DATA', data);
-
-      let obj: CoinsData = {
-        coins: [],
-        timeOfRequest: 0
-      };
-
-      if (data.body && (data.status === 200))
+      let coinsData = this.getValuesFromLocalStorage(COINS_DATA_LOCAL_STORAGE_KEY);
+      let currentTime = Date.now();
+      if (currentTime - coinsData.timeOfRequest > FIVE_MINUTES)
       {
-        obj.coins = data.body;
-        obj.timeOfRequest = Date.now();
-        this.localStorageService.setObject('coins-data', obj);
-        return obj;
+        return this.makeRequestToApiAndWriteResultToLocalStorage(COINS_DATA_LOCAL_STORAGE_KEY);
       }
-      try
+      return of(coinsData);
+    } catch (error)
+    {
+      return this.makeRequestToApiAndWriteResultToLocalStorage(COINS_DATA_LOCAL_STORAGE_KEY);
+    }
+  }
+
+  private writeCoinsDataToLocalStorage(coinsData: CoinsData, key: string)
+  {
+    try
+    {
+      this.localStorageService.setObject(key, coinsData);
+    }
+    catch (error)
+    {
+      if (error instanceof Error)
       {
-        return this.localStorageService.getObject('coins-data') as CoinsData;
-      } catch (error)
-      {
-        throw new AggregateError([new Error('Failed to get coins data from local storage'), new Error(`Failed to fetch coins data. Status: ${data.status}`)]);
+        throw error;
       }
-    }));
+      throw new Error("Error when writing coins data to local storage");
+    }
+  }
+
+  private makeRequstToApi(): Observable<CoinsData>
+  {
+    console.log('Making request to an API!');
+    return this.http.get<Coin[]>(`${environment.apiDomain}${environment.apiTop100CoinsDefaultEndpoint}`, { observe: 'response' })
+      .pipe(
+        catchError(
+          (error) => 
+          {
+            if (error instanceof Error)
+            {
+              return throwError(() => error);
+            }
+            return throwError(() => new Error(`Error GET method`));
+          }
+        ),
+        map((data) =>
+        {
+          if (data.ok && data.body)
+          {
+            let coinsData: CoinsData = { coins: (data.body).slice(0, 5), timeOfRequest: Date.now() };
+            return coinsData;
+          }
+          else 
+          {
+            throw new Error(`Error while getting data from API.\n Status: ${data.status}.\n Body: ${data.body}`);
+          }
+        }));
+  }
+  private makeRequestToApiAndWriteResultToLocalStorage(key: string): Observable<CoinsData>
+  {
+    return this.makeRequstToApi().pipe(tap(
+      (coinsData: CoinsData) =>
+      {
+        try
+        {
+          this.writeCoinsDataToLocalStorage(coinsData, key);
+        } catch (error)
+        {
+          if (error instanceof Error)
+          {
+            return throwError(() => error);
+          }
+          return throwError(() => new Error(`Error writing coins data to local storage`));
+        }
+        return null; // tap does not return anything, added to avoid ts warning
+      }));
+  }
+  private getValuesFromLocalStorage(key: string): CoinsData
+  {
+    try
+    {
+      let coinsData = this.localStorageService.getObject(key) as CoinsData;
+
+      if (!coinsData)
+      {
+        throw new Error(`Coins' data is null!`);
+      }
+      return coinsData;
+    } catch (error)
+    {
+      if (error instanceof Error)
+      {
+        throw error;
+      }
+      throw new Error("Error when getting coins' data from storage");
+    }
   }
 }

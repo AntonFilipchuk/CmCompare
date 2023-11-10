@@ -9,12 +9,17 @@ import { CoinsData } from 'src/app/Interfaces/CoinsData';
 })
 export class TableService
 {
-  constructor (private coinsService : CoinsService)
+  constructor (private coinsService: CoinsService)
   {
-    coinsService.getTop100Coins().pipe(map((data: CoinsData) => (data.coins))).subscribe((table) =>
+    coinsService.getCoinsData().pipe(map((data: CoinsData) => (data.coins))).subscribe((table) =>
     {
       this.setTable(table);
     });
+
+    // coinsService.getTop100Coins().pipe(map((data: CoinsData) => (data.coins))).subscribe((table) =>
+    // {
+    //   this.setTable([...table]);
+    // });
   }
 
   private tableSubject = new BehaviorSubject<Coin[]>([]);

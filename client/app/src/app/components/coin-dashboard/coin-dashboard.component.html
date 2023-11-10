@@ -1,48 +1,11 @@
-<ng-container *ngIf="selectedCoin$ | async as selectedCoin; else no_coin_selected">
-    <ng-container *ngIf="realCoin$ | async as realCoins">
-        {{getRealCoin(realCoins, selectedCoin)}}
-        <ng-container *ngIf="realCoin">
-            <div class=" coin-dashboard">
-                <div class="short-info">
-                    <img src="{{selectedCoin.image}}" alt="{{selectedCoin.name}}">
-                    <div class="info">
-                        <div>
-                            <h3>{{selectedCoin.name}}</h3>
-                        </div>
-                        <div>Real Price: {{realCoin!.current_price| currency :'USD':'symbol':'1.2-4' }}</div>
-                        <div>Real Market Cap: {{realCoin!.market_cap| currency :'USD':'symbol':'1.2-4' }}</div>
-                        <div>Real Rank: {{realCoin!.market_cap_rank }}</div>
-                    </div>
-                    <div class="info">
-                        <div>Changed Price: {{selectedCoin.current_price| currency :'USD':'symbol':'1.2-4' }}</div>
-                        <div>Changed Market Cap: {{selectedCoin.market_cap| currency :'USD':'symbol':'1.2-4' }}</div>
-                    </div>
-                </div>
-            </div>
+<ng-container *ngIf="realCoins$ | async as realCoins">
+</ng-container>
+<ng-container *ngIf=" selectedCoin$ | async as selectedCoin">
+    Price : {{selectedCoin.current_price}}
+    <ng-container *ngIf="realCoins$ | async as realCoins">
+        <ng-container *ngIf="realCoin$ | async as realCoin">
+            Real Price :
+            <div>{{realCoin.current_price}}</div>
         </ng-container>
     </ng-container>
 </ng-container>
-<ng-template #no_coin_selected>
-    <div>No coin selected</div>
-</ng-template>
-
-
-
-
-
-<!-- <div class=" coin-dashboard">
-        <div class="short-info">
-            <img src="{{coin.image}}" alt="{{coin.name}}">
-            <div class="info">
-                <div>
-                    <h3>{{coin.name}}</h3>
-                </div>
-                <div>Real Price: {{realCoin!.current_price| currency :'USD':'symbol':'1.2-4' }}</div>
-                <div>Real Market Cap: {{realCoin!.market_cap| currency :'USD':'symbol':'1.2-4' }}</div>
-            </div>
-            <div class="info">
-                <div>Changed Price: {{coin.current_price| currency :'USD':'symbol':'1.2-4' }}</div>
-                <div>Changed Market Cap: {{coin.market_cap| currency :'USD':'symbol':'1.2-4' }}</div>
-            </div>
-        </div>
-        </div> -->

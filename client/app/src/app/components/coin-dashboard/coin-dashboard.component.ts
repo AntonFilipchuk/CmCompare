@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { Observable, combineLatest, combineLatestAll, map } from 'rxjs';
 import { Coin } from 'src/app/Interfaces/Coin';
 import { CoinDashboardService } from 'src/app/services/CoinDashboardService/coin-dashboard.service';
+import { CoinsService } from 'src/app/services/CoinService/coins.service';
 
 @Component({
   selector: 'app-coin-dashboard',
@@ -11,14 +12,22 @@ import { CoinDashboardService } from 'src/app/services/CoinDashboardService/coin
 export class CoinDashboardComponent
 {
   constructor (private coinDashboardService: CoinDashboardService)
-  { }
-
-  selectedCoin$: Observable<Coin | null> = this.coinDashboardService.getSelectedCoin();
-  realCoin$ = this.coinDashboardService.realCoins$;
-  realCoin: Coin | undefined;
-
-  public getRealCoin(realCoins: Coin[], selectedCoin: Coin)
   {
-    this.realCoin = realCoins.find(c => c.id === selectedCoin.id);
   }
+  selectedCoin$: Observable<Coin | null> = this.coinDashboardService.getSelectedCoin();
+  realCoins$: Observable<Coin[]> = this.coinDashboardService.realCoins$;
+
+  realCoin$: Observable<Coin | null> = combineLatest([this.selectedCoin$, this.realCoins$]).pipe(map(([selectedCoin, realCoins]) => 
+  {
+    if (!selectedCoin)
+    {
+      return null;
+    }
+    let realCoin: Coin | undefined = realCoins.find(c => c.id === selectedCoin.id);
+    if (!realCoin)
+    {
+      return null;
+    }
+    return realCoin;
+  }));
 }
