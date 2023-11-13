@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { catchError, ignoreElements, of } from 'rxjs';
 import { Coin } from 'src/app/Interfaces/Coin';
 import { TestService } from 'src/app/services/TestService/test-service.service';
 
@@ -14,10 +15,9 @@ export class TestOneComponent
 
   }
 
-  data$ = this.testService.getCoinsData();
+  people$ = this.testService.getError();
+  peopleErrors$ = this.people$.pipe(ignoreElements(), catchError((error) => of(error)));
 
-  public changeBitcoinName(coins: Coin[])
-  {
-    coins[0].id = "TESTNAME";
-  }
+  data$ = this.testService.get404Data();
+  dataError$ = this.data$.pipe(ignoreElements(), catchError((error) => of(error)));
 }

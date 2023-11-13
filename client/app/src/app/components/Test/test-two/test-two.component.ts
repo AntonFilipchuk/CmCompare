@@ -15,5 +15,5 @@ export class TestTwoComponent
 
   }
 
-  data$ = this.testService.getCoinsData().pipe(map(val => structuredClone(val)));
+ // data$ = this.testService.getCoinsData().pipe(map(val => structuredClone(val)));
 }

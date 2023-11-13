@@ -20,15 +20,12 @@ export class CoinsService
 
 
   private coinsData$: Observable<CoinsData> | undefined;
-  // = this.getCoinsData().pipe(shareReplay(1));
-
-
 
   public getCoinsData(): Observable<CoinsData>
   {
     if (!this.coinsData$)
     {
-      this.coinsData$ = this.getFreshCoinsData();
+      this.coinsData$ = this.getFreshCoinsData().pipe(shareReplay(1));
     }
 
     return this.coinsData$;
@@ -38,7 +35,7 @@ export class CoinsService
   {
     try
     {
-      let coinsData = this.getValuesFromLocalStorage(COINS_DATA_LOCAL_STORAGE_KEY);
+      let coinsData = this.getCoinsFromLocalStorage(COINS_DATA_LOCAL_STORAGE_KEY);
       let currentTime = Date.now();
       if (currentTime - coinsData.timeOfRequest > FIVE_MINUTES)
       {
@@ -114,7 +111,7 @@ export class CoinsService
         return null; // tap does not return anything, added to avoid ts warning
       }));
   }
-  private getValuesFromLocalStorage(key: string): CoinsData
+  private getCoinsFromLocalStorage(key: string): CoinsData
   {
     try
     {

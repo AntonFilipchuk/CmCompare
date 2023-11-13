@@ -16,123 +16,40 @@ const COINS_DATA_LOCAL_STORAGE_KEY = 'test-coins-data';
 export class TestService
 {
 
-
-  constructor (private http: HttpClient, private localStorageService: LocalStorageService) { }
-
-
-  private coinsData$: Observable<CoinsData> | undefined;
-  // = this.getCoinsData().pipe(shareReplay(1));
-
-
-
-  public getCoinsData(): Observable<CoinsData>
+  constructor (private localStorageService: LocalStorageService, private http: HttpClient)
   {
-    if (!this.coinsData$)
-    {
-      this.coinsData$ = this.getFreshCoinsData();
-    }
 
-    return this.coinsData$;
+  }
+  people: Person[] = [{ id: 0, name: "Anton" }, { id: 1, name: "Kate" }];
+
+  getPeople(): Observable<Person[]> 
+  {
+    return of(this.people);
   }
 
-  private getFreshCoinsData(): Observable<CoinsData>
+  getError(): Observable<Person[]>
   {
-    try
+    return of(this.people).pipe(tap(() =>
     {
-      let coinsData = this.getValuesFromLocalStorage(COINS_DATA_LOCAL_STORAGE_KEY);
-      let currentTime = Date.now();
-      if (currentTime - coinsData.timeOfRequest > FIVE_MINUTES)
-      {
-        return this.makeRequestToApiAndWriteResultToLocalStorage(COINS_DATA_LOCAL_STORAGE_KEY);
-      }
-      return of(coinsData);
-    } catch (error)
-    {
-      return this.makeRequestToApiAndWriteResultToLocalStorage(COINS_DATA_LOCAL_STORAGE_KEY);
-    }
+      throw new Error("Error getting people");
+    }));
   }
 
-  private writeCoinsDataToLocalStorage(coinsData: CoinsData, key: string)
-  {
-    try
-    {
-      this.localStorageService.setObject(key, coinsData);
-    }
-    catch (error)
-    {
-      if (error instanceof Error)
-      {
-        throw error;
-      }
-      throw new Error("Error when writing coins data to local storage");
-    }
-  }
 
-  private makeRequstToApi(): Observable<CoinsData>
+  get404Data(): Observable<any>
   {
-    console.log('Making request to an API!');
-    return this.http.get<Coin[]>(`${environment.apiDomain}${environment.apiTop100CoinsDefaultEndpoint}`, { observe: 'response' })
-      .pipe(
-        catchError(
-          (error) => 
-          {
-            if (error instanceof Error)
-            {
-              return throwError(() => error);
-            }
-            return throwError(() => new Error(`Error GET method`));
-          }
-        ),
-        map((data) =>
-        {
-          if (data.ok && data.body)
-          {
-            let coinsData: CoinsData = { coins: (data.body).slice(0, 5), timeOfRequest: Date.now() };
-            return coinsData;
-          }
-          else 
-          {
-            throw new Error(`Error while getting data from API.\n Status: ${data.status}.\n Body: ${data.body}`);
-          }
-        }));
-  }
-  private makeRequestToApiAndWriteResultToLocalStorage(key: string): Observable<CoinsData>
-  {
-    return this.makeRequstToApi().pipe(tap(
-      (coinsData: CoinsData) =>
-      {
-        try
-        {
-          this.writeCoinsDataToLocalStorage(coinsData, key);
-        } catch (error)
-        {
-          if (error instanceof Error)
-          {
-            return throwError(() => error);
-          }
-          return throwError(() => new Error(`Error writing coins data to local storage`));
-        }
-        return null; // tap does not return anything, added to avoid ts warning
-      }));
-  }
-  private getValuesFromLocalStorage(key: string): CoinsData
-  {
-    try
+    return this.http.get<any>('https://httpbin.org/get/a', { observe: 'response' }).pipe(catchError(() => 
     {
-      let coinsData = this.localStorageService.getObject(key) as CoinsData;
+      throw new Error('Woops')
+    }), tap((data) => 
+    {
+      throw new Error(`Status code: ${data.status}`);
+    }));
+  }
+}
 
-      if (!coinsData)
-      {
-        throw new Error(`Coins' data is null!`);
-      }
-      return coinsData;
-    } catch (error)
-    {
-      if (error instanceof Error)
-      {
-        throw error;
-      }
-      throw new Error("Error when getting coins' data from storage");
-    }
-  }
+interface Person
+{
+  id: number;
+  name: string;
 }
