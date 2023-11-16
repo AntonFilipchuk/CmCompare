@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { Observable, combineLatest, combineLatestAll, map } from 'rxjs';
 import { Coin } from 'src/app/Interfaces/Coin';
-import { CoinDashboardService } from 'src/app/services/CoinDashboardService/coin-dashboard.service';
-import { CoinsService } from 'src/app/services/CoinService/coins.service';
+import { CoinDashboardService } from 'src/app/Services/CoinDashboardService/coin-dashboard.service';
+import { CoinsService } from 'src/app/Services/CoinService/coins.service';
 
 @Component({
   selector: 'app-coin-dashboard',

@@ -18,35 +18,47 @@ export class CoinsService
 {
   constructor (private http: HttpClient, private localStorageService: LocalStorageService) { }
 
-
   private coinsData$: Observable<CoinsData> | undefined;
 
   public getCoinsData(): Observable<CoinsData>
   {
+    if (this.localStorageService.ifLocalStorageAvaliable)
+    {
+      if (!this.coinsData$)
+      {
+        this.coinsData$ = this.getFreshCoinsDataAndSaveToLocalStorage().pipe(shareReplay(1));
+      }
+
+      return this.coinsData$;
+    }
+
     if (!this.coinsData$)
     {
-      this.coinsData$ = this.getFreshCoinsData().pipe(shareReplay(1));
+      this.coinsData$ = this.getFreshCoinsDataFromApi().pipe(shareReplay(1));
     }
 
     return this.coinsData$;
+
   }
 
-  private getFreshCoinsData(): Observable<CoinsData>
+  private getFreshCoinsDataAndSaveToLocalStorage(): Observable<CoinsData>
   {
+
     try
     {
       let coinsData = this.getCoinsFromLocalStorage(COINS_DATA_LOCAL_STORAGE_KEY);
       let currentTime = Date.now();
       if (currentTime - coinsData.timeOfRequest > FIVE_MINUTES)
       {
-        return this.makeRequestToApiAndWriteResultToLocalStorage(COINS_DATA_LOCAL_STORAGE_KEY);
+        return this.getFreshCoinsDataFromApiAndWriteResultToLocalStorage(COINS_DATA_LOCAL_STORAGE_KEY);
       }
       return of(coinsData);
     } catch (error)
     {
-      return this.makeRequestToApiAndWriteResultToLocalStorage(COINS_DATA_LOCAL_STORAGE_KEY);
+      return this.getFreshCoinsDataFromApiAndWriteResultToLocalStorage(COINS_DATA_LOCAL_STORAGE_KEY);
     }
   }
+
 
   private writeCoinsDataToLocalStorage(coinsData: CoinsData, key: string)
   {
@@ -64,7 +76,7 @@ export class CoinsService
     }
   }
 
-  private makeRequstToApi(): Observable<CoinsData>
+  private getFreshCoinsDataFromApi(): Observable<CoinsData>
   {
     console.log('Making request to an API!');
     return this.http.get<Coin[]>(`${environment.apiDomain}${environment.apiTop100CoinsDefaultEndpoint}`, { observe: 'response' })
@@ -92,9 +104,9 @@ export class CoinsService
           }
         }));
   }
-  private makeRequestToApiAndWriteResultToLocalStorage(key: string): Observable<CoinsData>
+  private getFreshCoinsDataFromApiAndWriteResultToLocalStorage(key: string): Observable<CoinsData>
   {
-    return this.makeRequstToApi().pipe(tap(
+    return this.getFreshCoinsDataFromApi().pipe(tap(
       (coinsData: CoinsData) =>
       {
         try

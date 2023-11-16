@@ -2,7 +2,7 @@ import { CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem } from '@a
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { Observable, from, map, of, switchMap, take, takeLast } from 'rxjs';
-import { TestService } from 'src/app/services/TestService/test-service.service';
+import { TestService } from 'src/app/Services/TestService/test-service.service';
 
 
 

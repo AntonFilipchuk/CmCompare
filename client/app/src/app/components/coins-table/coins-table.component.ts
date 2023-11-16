@@ -1,13 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { BehaviorSubject, Observable, catchError, concatMap, filter, findIndex, from, map, mergeMap, of, reduce, switchMap, take, takeLast, tap, throttleTime } from 'rxjs';
-import { CoinsService } from 'src/app/services/CoinService/coins.service';
-import { CoinsData } from 'src/app/Interfaces/CoinsData';
+import { Component, Input, ViewChild } from '@angular/core';
+import { Observable, map, tap, } from 'rxjs';
 import { Coin } from 'src/app/Interfaces/Coin';
-import { MatTable, MatTableDataSource } from '@angular/material/table';
-import { CdkDrag, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { LoadingWrapper } from 'src/app/Helpers/LoadingWrapper/LoadingWrapper';
-import { TableService } from 'src/app/services/TableService/table.service';
-import { CoinDashboardService } from 'src/app/services/CoinDashboardService/coin-dashboard.service';
+import { MatTable, } from '@angular/material/table';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { TableService } from 'src/app/Services/TableService/table.service';
+import { CoinDashboardService } from 'src/app/Services/CoinDashboardService/coin-dashboard.service';
 
 @Component({
   selector: 'app-coins-table',
@@ -16,12 +13,16 @@ import { CoinDashboardService } from 'src/app/services/CoinDashboardService/coin
 })
 export class CoinsTableComponent
 {
-  @ViewChild(MatTable, { static: false }) table!: MatTable<any>;
-  table$: Observable<Coin[]> = this.tableService.getTable();
+  @ViewChild(MatTable, { static: false }) matTable!: MatTable<any>;
+  @Input() coinsTable$! :  Observable<Coin[]>;
+  table$: Observable<Coin[]> = this.tableService.getTable().pipe(tap(value => this.coinsMarketCaps = value.map(coin => coin.market_cap)));
   coinsMarketCaps: number[] | undefined;
-  constructor (private tableService: TableService,
-    private coinDashboardService: CoinDashboardService) { }
 
+  constructor (
+    private tableService: TableService,
+    private coinDashboardService: CoinDashboardService
+  )
+  { }
 
   displayedColumns: string[] = ['#', 'id', 'current_price', 'circulating_supply', 'market_cap'];
   totalMarketCap$: Observable<number> = this.table$.pipe(map(coins => coins.map(coin => coin.market_cap).reduce((acc, value) => acc + value)));
@@ -37,7 +38,7 @@ export class CoinsTableComponent
 
     this.recalculateCoinsValues(this.coinsMarketCaps!, table);
     this.tableService.setTable(table);
-    this.table.renderRows();
+    this.matTable.renderRows();
   }
   recalculateCoinsValues(coinsMarketCaps: number[], coins: Coin[])
   {
@@ -47,11 +48,6 @@ export class CoinsTableComponent
       coin.current_price = coin.market_cap / coin.circulating_supply;
       coin.market_cap_rank = ++index;
     });
-  }
-
-  setInitialValues(table: Coin[])
-  {
-    this.coinsMarketCaps = table.map(coin => coin.market_cap);
   }
 
   onDragStart(rowData: any)

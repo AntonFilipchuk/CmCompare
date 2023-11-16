@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -14,7 +14,9 @@ import { LoadingOrErrorComponent } from './components/loading-or-error/loading-o
 import { CoinInfoCellComponent } from './components/coins-table/coin-info-cell/coin-info-cell.component';
 import { CoinDashboardComponent } from './components/coin-dashboard/coin-dashboard.component';
 import { TestOneComponent } from './components/Test/test-one/test-one/test-one.component';
+import { ApiInterceptor } from './Interceptors/ApiInterceptor';
 import { TestTwoComponent } from './components/Test/test-two/test-two.component';
+import { CoinsComponent } from './components/coins/coins.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +28,8 @@ import { TestTwoComponent } from './components/Test/test-two/test-two.component'
     CoinInfoCellComponent,
     CoinDashboardComponent,
     TestOneComponent,
-    TestTwoComponent
+    TestTwoComponent,
+    CoinsComponent
   ],
   imports: [
     BrowserModule,
@@ -36,7 +39,9 @@ import { TestTwoComponent } from './components/Test/test-two/test-two.component'
     MatTableModule,
     DragDropModule
   ],
-  providers: [],
+  providers: [
+    //{ provide: HTTP_INTERCEPTORS, useClass: ApiInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

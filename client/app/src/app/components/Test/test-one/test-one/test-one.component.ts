@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { catchError, ignoreElements, of } from 'rxjs';
 import { Coin } from 'src/app/Interfaces/Coin';
-import { TestService } from 'src/app/services/TestService/test-service.service';
+import { TestService } from 'src/app/Services/TestService/test-service.service';
 
 @Component({
   selector: 'app-test-one',

@@ -38,13 +38,13 @@ export class TestService
 
   get404Data(): Observable<any>
   {
-    return this.http.get<any>('https://httpbin.org/get/a', { observe: 'response' }).pipe(catchError(() => 
+    return this.http.get<any>('https://httpbin.org/get', { observe: 'response' }).pipe(catchError(() => 
     {
-      throw new Error('Woops')
+      throw new Error('Woops');
     }), tap((data) => 
     {
-      throw new Error(`Status code: ${data.status}`);
-    }));
+      //throw new Error(`Status code: ${data.status}`);
+    }), shareReplay(1));
   }
 }
 

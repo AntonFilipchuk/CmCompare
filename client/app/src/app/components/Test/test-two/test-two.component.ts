@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { map } from 'rxjs';
-import { TestService } from 'src/app/services/TestService/test-service.service';
+import { TestService } from 'src/app/Services/TestService/test-service.service';
 
 @Component({
   selector: 'app-test-two',
