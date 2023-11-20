@@ -1,5 +1,5 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { BehaviorSubject, Observable, map, tap, } from 'rxjs';
+import { Component,  ViewChild } from '@angular/core';
+import {  Observable,  } from 'rxjs';
 import { Coin } from 'src/app/Interfaces/Coin';
 import { MatTable, } from '@angular/material/table';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
@@ -10,22 +10,13 @@ import { CoinsDisplayService } from 'src/app/Services/CoinsDisplay/coins-display
   templateUrl: './coins-table.component.html',
   styleUrls: ['./coins-table.component.scss']
 })
-export class CoinsTableComponent implements OnInit
+export class CoinsTableComponent
 {
-
   constructor (private coinsDisplayService: CoinsDisplayService)
   { }
-  ngOnInit(): void
-  {
-    this.coinsDisplayService.coinsTable$.subscribe((value) => 
-    {
-      this.cTable$.next(value);
-    });
-  }
   @ViewChild(MatTable, { static: false }) public matTable!: MatTable<any>;
   public coinsTable$: Observable<Coin[]> = this.coinsDisplayService.coinsTable$;
   public displayedColumns: string[] = ['#', 'id', 'current_price', 'circulating_supply', 'market_cap'];
-  public cTable$: BehaviorSubject<Coin[]> = new BehaviorSubject<Coin[]>([]);
   #coinsMarketCaps: number[] | undefined;
 
   moveTableRows(event: CdkDragDrop<Coin[], any, any>, coinsTable: Coin[])

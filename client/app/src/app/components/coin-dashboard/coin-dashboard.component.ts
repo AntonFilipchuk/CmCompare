@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Observable, combineLatest, combineLatestAll, filter, map, of } from 'rxjs';
+import { Observable, combineLatest, map} from 'rxjs';
 import { Coin } from 'src/app/Interfaces/Coin';
 import { CoinsDisplayService } from 'src/app/Services/CoinsDisplay/coins-display.service';
 
