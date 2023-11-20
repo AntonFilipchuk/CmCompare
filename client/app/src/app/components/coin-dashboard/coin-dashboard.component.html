@@ -1,11 +1,7 @@
-<ng-container *ngIf="realCoins$ | async as realCoins">
-</ng-container>
 <ng-container *ngIf=" selectedCoin$ | async as selectedCoin">
     Price : {{selectedCoin.current_price}}
-    <ng-container *ngIf="realCoins$ | async as realCoins">
         <ng-container *ngIf="realCoin$ | async as realCoin">
             Real Price :
             <div>{{realCoin.current_price}}</div>
-        </ng-container>
     </ng-container>
 </ng-container>

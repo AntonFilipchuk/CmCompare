@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { Observable, combineLatest, combineLatestAll, map } from 'rxjs';
+import { Observable, combineLatest, combineLatestAll, filter, map, of } from 'rxjs';
 import { Coin } from 'src/app/Interfaces/Coin';
 import { CoinDashboardService } from 'src/app/Services/CoinDashboardService/coin-dashboard.service';
 import { CoinsService } from 'src/app/Services/CoinService/coins.service';
+import { CoinsDisplayService } from 'src/app/Services/CoinsDisplay/coins-display.service';
 
 @Component({
   selector: 'app-coin-dashboard',
@@ -11,13 +12,13 @@ import { CoinsService } from 'src/app/Services/CoinService/coins.service';
 })
 export class CoinDashboardComponent
 {
-  constructor (private coinDashboardService: CoinDashboardService)
+  constructor (private coinsDisplayService: CoinsDisplayService)
   {
   }
-  selectedCoin$: Observable<Coin | null> = this.coinDashboardService.getSelectedCoin();
-  realCoins$: Observable<Coin[]> = this.coinDashboardService.realCoins$;
+  public selectedCoin$: Observable<Coin | null> = this.coinsDisplayService.getSelectedCoin();
+  #realCoinsData$: Observable<Coin[]> = this.coinsDisplayService.realCoinsData$;
 
-  realCoin$: Observable<Coin | null> = combineLatest([this.selectedCoin$, this.realCoins$]).pipe(map(([selectedCoin, realCoins]) => 
+  public realCoin$: Observable<Coin | null> = combineLatest([this.selectedCoin$, this.#realCoinsData$]).pipe(map(([selectedCoin, realCoins]) => 
   {
     if (!selectedCoin)
     {

@@ -1,4 +1,4 @@
-<div *ngIf="table$ | async as table" class="table-container">
+<div *ngIf="coinsTable$ | async as table" class="table-container">
     <mat-table [dataSource]="table" cdkDropList [cdkDropListData]="table"
         (cdkDropListDropped)="moveTableRows($event, table)">
 

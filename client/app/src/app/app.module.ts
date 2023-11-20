@@ -17,6 +17,7 @@ import { TestOneComponent } from './components/Test/test-one/test-one/test-one.c
 import { ApiInterceptor } from './Interceptors/ApiInterceptor';
 import { TestTwoComponent } from './components/Test/test-two/test-two.component';
 import { CoinsComponent } from './components/coins/coins.component';
+import { CoinsDisplayComponent } from './components/coins-display/coins-display.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { CoinsComponent } from './components/coins/coins.component';
     CoinDashboardComponent,
     TestOneComponent,
     TestTwoComponent,
-    CoinsComponent
+    CoinsComponent,
+    CoinsDisplayComponent
   ],
   imports: [
     BrowserModule,
