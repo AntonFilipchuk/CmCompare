@@ -1,1 +1,8 @@
-<p>coins-display works!</p>
+<div *ngIf="coinsState$ | async as coinsData">
+    <div *ngIf="coinsData.isLoading">Loading</div>
+    <div *ngIf="coinsData.error">Error {{coinsData.error}}</div>
+    <div *ngIf="coinsData.value">
+        <app-coin-dashboard></app-coin-dashboard>
+        <app-coins-table></app-coins-table>
+    </div>
+</div>
