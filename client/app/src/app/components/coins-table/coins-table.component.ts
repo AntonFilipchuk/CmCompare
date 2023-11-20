@@ -3,8 +3,6 @@ import { BehaviorSubject, Observable, map, tap, } from 'rxjs';
 import { Coin } from 'src/app/Interfaces/Coin';
 import { MatTable, } from '@angular/material/table';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { TableService } from 'src/app/Services/TableService/table.service';
-import { CoinDashboardService } from 'src/app/Services/CoinDashboardService/coin-dashboard.service';
 import { CoinsDisplayService } from 'src/app/Services/CoinsDisplay/coins-display.service';
 
 @Component({
