@@ -1,7 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { Observable, catchError, map, of, startWith, switchMap, throwError } from 'rxjs';
-import { LoadingWrapper } from 'src/app/Helpers/LoadingWrapper/LoadingWrapper';
+import { BehaviorSubject, Observable, catchError, combineLatest, finalize, map, of, timer } from 'rxjs';
 import { Coin } from 'src/app/Interfaces/Coin';
 import { CoinsDisplayService } from 'src/app/Services/CoinsDisplay/coins-display.service';
 
@@ -15,19 +14,34 @@ export class CoinsDisplayComponent
   constructor (private coinsDisplayService: CoinsDisplayService)
   { }
 
-  public coins$: LoadingWrapper<Coin[]> = new LoadingWrapper(this.coinsDisplayService.coinsTable$);
-  public readonly coinsState$: Observable<HttpRequestState<Coin[]>> = this.coinsDisplayService.coinsTable$.pipe(
-    map((value) => 
+  public lodaing$ = new BehaviorSubject(true);
+
+  #requestResult: Observable<RequestResult<Coin[]>> = this.coinsDisplayService.coinsTable$.pipe(
+    map((value: Coin[]): RequestResult<Coin[]> => 
     {
-      return { isLoading: false, value };
+      return { value: value, error: undefined };
     }),
-    catchError((error) => of({ isLoading: false, error: error })),
-    startWith({ isLoading: true }));
+    catchError((err: any): Observable<RequestResult<Coin[]>> => 
+    {
+      return of({ error: err });
+    })
+  );
+
+  public result$ = combineLatest(
+    [timer(1000), this.#requestResult]
+  ).pipe(
+    finalize(() => 
+    {
+      this.lodaing$.next(false);
+    }),
+    map(observables => observables[1])
+  );
+
 }
 
-export interface HttpRequestState<T>
+
+export interface RequestResult<T>
 {
-  isLoading: boolean;
   value?: T;
   error?: HttpErrorResponse | Error;
 }

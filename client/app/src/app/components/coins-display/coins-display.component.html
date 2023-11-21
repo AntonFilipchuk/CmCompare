@@ -1,8 +1,15 @@
-<div *ngIf="coinsState$ | async as coinsData">
-    <div *ngIf="coinsData.isLoading">Loading</div>
-    <div *ngIf="coinsData.error">Error {{coinsData.error}}</div>
-    <div *ngIf="coinsData.value">
-        <app-coin-dashboard></app-coin-dashboard>
-        <app-coins-table></app-coins-table>
-    </div>
-</div>
+
+<ng-container *ngIf="{loading : lodaing$ | async, result : result$ | async} as state">
+    <ng-container *ngIf="state.loading; else showResult">
+        <app-loading-spinner></app-loading-spinner>
+    </ng-container>
+    <ng-template #showResult>
+        <ng-container *ngIf="state.result?.error as error">
+            <div>Got an error: {{error}}</div>
+        </ng-container>
+        <ng-container *ngIf="state.result?.value">
+            <app-coin-dashboard></app-coin-dashboard>
+            <app-coins-table></app-coins-table>
+        </ng-container>
+    </ng-template>
+</ng-container>
