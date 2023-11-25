@@ -1,4 +1,3 @@
-
 <ng-container *ngIf="{loading : lodaing$ | async, result : result$ | async} as state">
     <ng-container *ngIf="state.loading; else showResult">
         <app-loading-spinner></app-loading-spinner>
@@ -8,7 +7,7 @@
             <div>Got an error: {{error}}</div>
         </ng-container>
         <ng-container *ngIf="state.result?.value">
-            <app-coin-dashboard></app-coin-dashboard>
+            <app-coin-dashboard style="position: sticky;"></app-coin-dashboard>
             <app-coins-table></app-coins-table>
         </ng-container>
     </ng-template>

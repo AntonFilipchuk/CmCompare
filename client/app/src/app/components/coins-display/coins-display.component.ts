@@ -4,6 +4,9 @@ import { BehaviorSubject, Observable, catchError, combineLatest, finalize, map, 
 import { Coin } from 'src/app/Interfaces/Coin';
 import { CoinsDisplayService } from 'src/app/Services/CoinsDisplay/coins-display.service';
 
+
+const LOADING_SPINNER_MIN_TIME = 0;
+
 @Component({
   selector: 'app-coins-display',
   templateUrl: './coins-display.component.html',
@@ -28,7 +31,7 @@ export class CoinsDisplayComponent
   );
 
   public result$ = combineLatest(
-    [timer(1000), this.#requestResult]
+    [timer(LOADING_SPINNER_MIN_TIME), this.#requestResult]
   ).pipe(
     finalize(() => 
     {

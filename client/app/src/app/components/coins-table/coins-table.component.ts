@@ -1,5 +1,5 @@
-import { Component,  ViewChild } from '@angular/core';
-import {  Observable,  } from 'rxjs';
+import { Component, ViewChild } from '@angular/core';
+import { Observable, } from 'rxjs';
 import { Coin } from 'src/app/Interfaces/Coin';
 import { MatTable, } from '@angular/material/table';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
@@ -18,7 +18,7 @@ export class CoinsTableComponent
   public coinsTable$: Observable<Coin[]> = this.coinsDisplayService.coinsTable$;
   public displayedColumns: string[] = ['#', 'id', 'current_price', 'circulating_supply', 'market_cap'];
   #coinsMarketCaps: number[] | undefined;
-
+  #selectedCoin!: Coin | null;
   moveTableRows(event: CdkDragDrop<Coin[], any, any>, coinsTable: Coin[])
   {
     const selectedCoinIndex = coinsTable.findIndex((coin) => coin.id === event.item.data.id);
@@ -28,8 +28,11 @@ export class CoinsTableComponent
       return;
     }
     moveItemInArray(coinsTable, selectedCoinIndex, event.currentIndex);
-
     this.recalculateCoinsValues(this.#coinsMarketCaps, coinsTable);
+
+    //Don't forget to call next(coin) on BehaviourSubject as we've changed it's properties.
+    this.coinsDisplayService.setSelectedCoin(this.#selectedCoin);
+
     this.matTable.renderRows();
   }
   recalculateCoinsValues(coinsMarketCaps: number[], coinsTable: Coin[])
@@ -45,9 +48,9 @@ export class CoinsTableComponent
   onDragStart(rowData: any)
   {
     let coin = rowData as (Coin | null);
+    this.#selectedCoin = coin;
     this.coinsDisplayService.setSelectedCoin(coin);
   }
-
 }
 
 

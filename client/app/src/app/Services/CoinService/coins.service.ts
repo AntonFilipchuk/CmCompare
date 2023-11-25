@@ -95,7 +95,7 @@ export class CoinsService
         {
           if (data.ok && data.body)
           {
-            let coinsData: CoinsData = { coins: (data.body).slice(0, 5), timeOfRequest: Date.now() };
+            let coinsData: CoinsData = { coins: (data.body).slice(0, 100), timeOfRequest: Date.now() };
             return coinsData;
           }
           else 

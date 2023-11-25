@@ -1,7 +1,38 @@
-<ng-container *ngIf=" selectedCoin$ | async as selectedCoin">
-    Price : {{selectedCoin.current_price}}
-        <ng-container *ngIf="realCoin$ | async as realCoin">
-            Real Price :
-            <div>{{realCoin.current_price}}</div>
+<ng-container *ngIf="prevAndCurrentSelectedCoins$ | async as selectedCoins">
+
+    <ng-container *ngIf="selectedCoins[1] as selectedCoin">
+        <div style="display:  flex; flex-direction: column; align-items: center;">
+            <div>Selected coin:</div>
+            <div>{{selectedCoin.id | uppercase}}</div>
+            <img src="{{selectedCoin.image}}" alt="{{selectedCoin.id}}" style="max-width: 50px;">
+        </div>
+
+        <div>
+            <table>
+                <tr>
+                    <th>Type</th>
+                    <th>Price</th>
+                    <th>Change</th>
+                </tr>
+                <tr>
+                    <td>Current price</td>
+                    <td> {{(currentSelectedCoinPrice$| async | currency :'USD':'symbol':'1.2')}} </td>
+                    <td rowspan="2">{{prevAndCurrentCoinPricePercentChange$ | async}}
+                        ({{prevAndCurrentCoinPriceValueChange$ | async}})</td>
+                </tr>
+                <tr>
+                    <td>Previous price</td>
+                    <td>{{(prevSelectedCoinPrice$| async | currency :'USD':'symbol':'1.2')}}</td>
+                </tr>
+
+                <tr>
+                    <td>Real price</td>
+                    <td>{{(realCoin$ | async)!.current_price | currency :'USD':'symbol':'1.2'}}</td>
+                    <td>{{currentAndRealCoinPricePercentChange$ | async}}
+                        ({{currentAndRealCoinPriceValueChange$ |
+                        async}})</td>
+                </tr>
+            </table>
+        </div>
     </ng-container>
 </ng-container>

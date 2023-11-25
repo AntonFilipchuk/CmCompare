@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { catchError, ignoreElements, of } from 'rxjs';
+import { catchError, ignoreElements, map, of } from 'rxjs';
 import { Coin } from 'src/app/Interfaces/Coin';
 import { TestService } from 'src/app/Services/TestService/test-service.service';
 
@@ -15,9 +15,13 @@ export class TestOneComponent
 
   }
 
-  people$ = this.testService.getError();
-  peopleErrors$ = this.people$.pipe(ignoreElements(), catchError((error) => of(error)));
+  obj = { name: "Anton", id: 0 };
 
-  data$ = this.testService.get404Data();
-  dataError$ = this.data$.pipe(ignoreElements(), catchError((error) => of(error)));
+  foo$ = of(this.obj);
+  bar$ = this.foo$.pipe(map(o => o.name));
+
+  public change()
+  {
+    this.obj.name = "ololo";
+  }
 }

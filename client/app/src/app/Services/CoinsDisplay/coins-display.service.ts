@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CoinsService } from '../CoinService/coins.service';
-import { BehaviorSubject, Observable, map } from 'rxjs';
+import { BehaviorSubject, Observable, map, pairwise, startWith } from 'rxjs';
 import { Coin } from 'src/app/Interfaces/Coin';
 
 @Injectable({
@@ -18,6 +18,7 @@ export class CoinsDisplayService
   public realCoinsData$: Observable<Coin[]> = this.#coins$;
 
   public coinsTable$: Observable<Coin[]> = this.#coins$.pipe(map(coins => structuredClone(coins)));
+
 
   #selectedCoin$: BehaviorSubject<Coin | null> = new BehaviorSubject<Coin | null>(null);
 

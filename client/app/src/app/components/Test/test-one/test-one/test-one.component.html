@@ -1,36 +1,4 @@
-<!-- <ng-container *ngIf="people$ | async as people">
-    <div *ngFor="let person of people">
-        {{person.name}}
-    </div>
-</ng-container> -->
+<div>{{(foo$ | async)?.name}}</div>
+<div>{{bar$ | async}}</div>
 
-<!-- <ng-container *ngIf="{people: people$ | async, error: peopleErrors$ | async} as data">'
-    <ng-container *ngIf="data.people; else loading">
-        <div *ngFor="let person of data.people">
-            {{person.name}}
-        </div>
-    </ng-container>
-    <ng-template #loading>
-        <div *ngIf="!data.error">
-            Loading!!!
-        </div>
-        <div *ngIf="data.error">
-            {{data.error}}
-        </div>
-    </ng-template>
-</ng-container> -->
-
-
-<ng-container *ngIf="{data: data$ | async, error: dataError$ | async} as fooData">'
-    <ng-container *ngIf="fooData.data; else loading">
-        {{fooData.data}}
-    </ng-container>
-    <ng-template #loading>
-        <div *ngIf="!fooData.error">
-            Loading!!!
-        </div>
-        <div *ngIf="fooData.error">
-            {{fooData.error.message}}
-        </div>
-    </ng-template>
-</ng-container>
+<button (click)="change()">change</button>
