@@ -14,12 +14,12 @@ export class CoinDashboardComponent
   { }
 
 
-  public prevAndCurrentSelectedCoins$: Observable<[Coin | null, Coin | null]> = this.coinsDisplayService.getSelectedCoin().pipe(startWith(null), pairwise());
-  public currentSelectedCoin: Observable<Coin | null> = this.prevAndCurrentSelectedCoins$.pipe(map(([_, c]) => c));
-  public prevSelectedCoin: Observable<Coin | null> = this.prevAndCurrentSelectedCoins$.pipe(map(([p, _]) => p));
+  #prevAndCurrentSelectedCoins$: Observable<[Coin | null, Coin | null]> = this.coinsDisplayService.getSelectedCoin().pipe(startWith(null), pairwise());
+  public currentSelectedCoin$: Observable<Coin | null> = this.#prevAndCurrentSelectedCoins$.pipe(map(([_, c]) => c));
+  public prevSelectedCoin$: Observable<Coin | null> = this.#prevAndCurrentSelectedCoins$.pipe(map(([p, _]) => p));
 
 
-  #lastCoinPricePair: Observable<(number)[]> = this.currentSelectedCoin.pipe(
+  #lastCoinPricePair: Observable<(number)[]> = this.currentSelectedCoin$.pipe(
     map((coin) => 
     {
       return coin ? coin.current_price : null;
@@ -38,7 +38,7 @@ export class CoinDashboardComponent
     }));
 
   #lastDistinctCoinPrices$: Observable<(number)[]> =
-    combineLatest([this.prevSelectedCoin, this.currentSelectedCoin, this.#lastCoinPricePair]).pipe(
+    combineLatest([this.prevSelectedCoin$, this.currentSelectedCoin$, this.#lastCoinPricePair]).pipe(
       map(([prevSelectedCoin, currentSelectedCoin, prices]) => 
       {
         if (prevSelectedCoin === null && currentSelectedCoin === null)
@@ -78,7 +78,7 @@ export class CoinDashboardComponent
   #realCoinsData$: Observable<Coin[]> = this.coinsDisplayService.realCoinsData$;
 
   public realCoin$: Observable<Coin | null> = combineLatest(
-    [this.prevAndCurrentSelectedCoins$, this.#realCoinsData$]
+    [this.#prevAndCurrentSelectedCoins$, this.#realCoinsData$]
   ).pipe(map(([selectedCoins, realCoins]) => 
   {
     if (!selectedCoins[1])

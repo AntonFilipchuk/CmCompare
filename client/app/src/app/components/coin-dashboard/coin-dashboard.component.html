@@ -1,10 +1,10 @@
-<ng-container *ngIf="prevAndCurrentSelectedCoins$ | async as selectedCoins">
+<div class="coin-dashboard">
+    <ng-container *ngIf="currentSelectedCoin$ | async as selectedCoin; else noCoinSelected">
 
-    <ng-container *ngIf="selectedCoins[1] as selectedCoin">
-        <div style="display:  flex; flex-direction: column; align-items: center;">
+        <div class="short-info">
             <div>Selected coin:</div>
             <div>{{selectedCoin.id | uppercase}}</div>
-            <img src="{{selectedCoin.image}}" alt="{{selectedCoin.id}}" style="max-width: 50px;">
+            <img src="{{selectedCoin.image}}" alt="{{selectedCoin.id}}">
         </div>
 
         <div>
@@ -34,5 +34,15 @@
                 </tr>
             </table>
         </div>
+
     </ng-container>
-</ng-container>
+
+    <ng-template #noCoinSelected>
+
+        <div class="no-coin">
+            <h2>
+                Please select a coin by clicking on any row in the table!
+            </h2>
+        </div>
+    </ng-template>
+</div>
