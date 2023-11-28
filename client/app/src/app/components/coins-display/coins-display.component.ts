@@ -1,12 +1,13 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { BehaviorSubject, Observable, catchError, combineLatest, finalize, map, of, timer } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, combineLatest, finalize, map, of, tap, timer } from 'rxjs';
 import { Coin } from 'src/app/Interfaces/Coin';
+import { CoinsDashboardService } from 'src/app/Services/CoinsDashboard/coin-dashboard.service';
 import { CoinsDisplayService } from 'src/app/Services/CoinsDisplay/coins-display.service';
+import { ColorChangeService } from 'src/app/Services/ColorChange/color-change.service';
 
 
-const LOADING_SPINNER_MIN_TIME = 0;
-
+const LOADING_SPINNER_MIN_TIME_MS = 1000;
 @Component({
   selector: 'app-coins-display',
   templateUrl: './coins-display.component.html',
@@ -14,10 +15,12 @@ const LOADING_SPINNER_MIN_TIME = 0;
 })
 export class CoinsDisplayComponent
 {
-  constructor (private coinsDisplayService: CoinsDisplayService)
+  constructor (private coinsDisplayService: CoinsDisplayService, private colorChangeService: ColorChangeService)
   { }
 
-  public lodaing$ = new BehaviorSubject(true);
+  public loading$ = new BehaviorSubject(true);
+
+  public coinsDashboardBgColor$ = this.colorChangeService.coinsDashboardBgColor$;
 
   #requestResult: Observable<RequestResult<Coin[]>> = this.coinsDisplayService.coinsTable$.pipe(
     map((value: Coin[]): RequestResult<Coin[]> => 
@@ -31,15 +34,14 @@ export class CoinsDisplayComponent
   );
 
   public result$ = combineLatest(
-    [timer(LOADING_SPINNER_MIN_TIME), this.#requestResult]
+    [timer(LOADING_SPINNER_MIN_TIME_MS), this.#requestResult]
   ).pipe(
     finalize(() => 
     {
-      this.lodaing$.next(false);
+      this.loading$.next(false);
     }),
     map(observables => observables[1])
   );
-
 }
 
 

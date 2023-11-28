@@ -1,5 +1,5 @@
 <div class="display">
-    <ng-container *ngIf="{loading : lodaing$ | async, result : result$ | async} as state">
+    <ng-container *ngIf="{loading : loading$ | async, result : result$ | async} as state">
         <ng-container *ngIf="state.loading; else showResult">
             <app-loading-spinner></app-loading-spinner>
         </ng-container>
@@ -8,7 +8,9 @@
                 <div>Got an error: {{error}}</div>
             </ng-container>
             <ng-container *ngIf="state.result?.value">
-                <app-coin-dashboard></app-coin-dashboard>
+                <app-coin-dashboard *ngIf="{ color: coinsDashboardBgColor$ | async } as data"
+                    [ngStyle]="{'background-color': data.color ? data.color : 'white'}"></app-coin-dashboard>
+
                 <app-coins-table></app-coins-table>
             </ng-container>
         </ng-template>

@@ -1,12 +1,13 @@
 <div class="coin-dashboard">
     <ng-container *ngIf="currentSelectedCoin$ | async as selectedCoin; else noCoinSelected">
 
+
         <div class="short-info">
             <div>
-                <p>Selected coin:</p>
+                <p class="highlighted">Selected coin:</p>
             </div>
             <div>
-                <p>{{selectedCoin.id | uppercase}}</p>
+                <p class="highlighted">{{selectedCoin.id | uppercase}}</p>
             </div>
             <img src="{{selectedCoin.image}}" alt="{{selectedCoin.id}}">
         </div>

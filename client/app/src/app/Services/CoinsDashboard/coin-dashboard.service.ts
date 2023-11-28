@@ -63,13 +63,12 @@ export class CoinsDashboardService
 
   public prevAndCurrentCoinPricePercentChange$ = this.#lastDistinctCoinPrices$.pipe(map(([prevCoinPrice, currentCoinPrice]) => 
   {
-    let result = this.#percentChange(prevCoinPrice, currentCoinPrice);
-    return this.#formatToPercentChange(result);
+    return this.#percentChange(prevCoinPrice, currentCoinPrice);
   }));
 
   public prevAndCurrentCoinPriceValueChange$ = this.#lastDistinctCoinPrices$.pipe(map(([prevCoinPrice, currentCoinPrice]) => 
   {
-    return this.#formatToValueChange(currentCoinPrice - prevCoinPrice);
+    return currentCoinPrice - prevCoinPrice;
   }));
 
   #realCoinsData$: Observable<Coin[]> = this.coinsDisplayService.realCoinsData$;
@@ -90,8 +89,6 @@ export class CoinsDashboardService
     return realCoin;
   }));
 
-  //Returns string 
-  //"0%" || "-n%" || "+n%" where n is a number 
   public currentAndRealCoinPricePercentChange$ = combineLatest([this.currentSelectedCoinPrice$, this.realCoin$]).pipe(
     map(([currentCoinPrice, realCoin]) => 
     {
@@ -99,13 +96,10 @@ export class CoinsDashboardService
       {
         return 0;
       }
-      let result = this.#percentChange(realCoin.current_price, currentCoinPrice);
-      return this.#formatToPercentChange(result);
+      return this.#percentChange(realCoin.current_price, currentCoinPrice);
     })
   );
 
-  //Returns string 
-  //"$0" || "-$n" || "+$n" where n is a number 
   public currentAndRealCoinPriceValueChange$ = combineLatest([this.currentSelectedCoinPrice$, this.realCoin$]).pipe(
     map(([currentCoinPrice, realCoin]) => 
     {
@@ -113,7 +107,7 @@ export class CoinsDashboardService
       {
         return 0;
       }
-      return this.#formatToValueChange(currentCoinPrice - realCoin.current_price);
+      return currentCoinPrice - realCoin.current_price;
     })
   );
 
@@ -134,36 +128,5 @@ export class CoinsDashboardService
       percent = - a * 100;
     }
     return Math.floor(percent);
-  }
-
-  #formatToValueChange(n: number): string
-  {
-    if (n > 0)
-    {
-      return `+$${this.#precise(n)}`;
-    }
-    else if (n < 0)
-    {
-      return `-$${this.#precise(Math.abs(n))}`;
-    }
-    return "$0";
-  }
-
-  #formatToPercentChange(n: number): string
-  {
-    if (n > 0)
-    {
-      return `+${n}%`;
-    }
-    else if (n < 0)
-    {
-      return `-${Math.abs(n)}%`;
-    }
-    return "0%";
-  }
-
-  #precise(n: number)
-  {
-    return n.toFixed(2);
   }
 }
