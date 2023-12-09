@@ -19,6 +19,8 @@ import { TestTwoComponent } from './components/Test/test-two/test-two.component'
 import { CoinsComponent } from './components/coins/coins.component';
 import { CoinsDisplayComponent } from './components/coins-display/coins-display.component';
 import { LoadingSpinnerComponent } from './components/loading-spinner/loading-spinner.component';
+import { ParticlesComponent } from './components/particles/particles.component';
+import { ParticleComponent } from './components/particles/particle/particle.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +35,9 @@ import { LoadingSpinnerComponent } from './components/loading-spinner/loading-sp
     TestTwoComponent,
     CoinsComponent,
     CoinsDisplayComponent,
-    LoadingSpinnerComponent
+    LoadingSpinnerComponent,
+    ParticlesComponent,
+    ParticleComponent
   ],
   imports: [
     BrowserModule,

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component} from '@angular/core';
 import { map } from 'rxjs';
 import { CoinsDashboardService } from 'src/app/Services/CoinsDashboard/coin-dashboard.service';
 
@@ -10,7 +10,8 @@ import { CoinsDashboardService } from 'src/app/Services/CoinsDashboard/coin-dash
 export class CoinDashboardComponent 
 {
   constructor (private coinsDashboardService: CoinsDashboardService)
-  { }
+  {
+  }
 
   public realCoin$ = this.coinsDashboardService.realCoin$;
   public currentSelectedCoin$ = this.coinsDashboardService.currentSelectedCoin$;

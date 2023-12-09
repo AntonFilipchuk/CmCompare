@@ -8,9 +8,12 @@
                 <div>Got an error: {{error}}</div>
             </ng-container>
             <ng-container *ngIf="state.result?.value">
-                <app-coin-dashboard *ngIf="{ color: coinsDashboardBgColor$ | async } as data"
-                    [ngStyle]="{'background-color': data.color ? data.color : 'white'}"></app-coin-dashboard>
-
+                <app-particles *ngIf="{ color: coinsDashboardBgColor$ | async } as data"
+                    backgroundColor="{{data.color}}"
+                    particleImgPath="/assets/rocket.255x256.png">
+                    <app-coin-dashboard>
+                    </app-coin-dashboard>
+                </app-particles>
                 <app-coins-table></app-coins-table>
             </ng-container>
         </ng-template>
